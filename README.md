@@ -16,6 +16,14 @@ yarn
 # ou
 npm install
 ```
+
+<h4>Seeds</h4>
+Para criar um usuário utilize o comando:
+
+```
+yarn sequelize db:seed:all
+```
+
 ### Rodar Backend/API
 ```
 yarn dev
