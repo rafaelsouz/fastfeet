@@ -1,4 +1,4 @@
-<h1 align="center"><img src="./images/logo.png" width="100"/></h1>
+<h1 align="center"><img src="./images/logo.png" width="300"/></h1>
 <h1 align="center"> GoBarber </h1>
 
 <h3 align="center">Uma aplicação fullstack de entrega de encomendas para uma transportadora fictícia</h3>
