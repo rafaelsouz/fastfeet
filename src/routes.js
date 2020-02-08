@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import SessionController from './app/controllers/SessionController';
 import UserController from './app/controllers/UserController';
+import RecipientController from './app/controllers/RecipientController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -12,5 +13,8 @@ routes.post('/sessions', SessionController.store);
 
 routes.use(authMiddleware);
 routes.put('/users', UserController.update);
+
+routes.post('/recipients', RecipientController.store);
+routes.put('/recipients', RecipientController.update);
 
 export default routes;
