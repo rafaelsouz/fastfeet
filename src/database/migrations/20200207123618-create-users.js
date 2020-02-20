@@ -20,6 +20,16 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      admin: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      status: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

@@ -11,6 +11,7 @@ class Recipient extends Model {
         city: Sequelize.STRING,
         state: Sequelize.STRING,
         zipcode: Sequelize.STRING,
+        status: Sequelize.INTEGER,
         // international: Sequelize.VIRTUAL,
       },
       {
