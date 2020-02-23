@@ -11,6 +11,7 @@ class RecipientController {
         .length(8)
         .required(),
       number: Yup.string().required(),
+      complement: Yup.string(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -28,10 +29,10 @@ class RecipientController {
       name,
       street,
       number,
+      neighborhood,
       complement,
       city,
       state,
-      zipcode,
     } = await Recipient.create(req.body);
 
     return res.json({
@@ -39,10 +40,10 @@ class RecipientController {
       name,
       street,
       number,
+      neighborhood,
       complement,
       city,
       state,
-      zipcode,
     });
   }
 
