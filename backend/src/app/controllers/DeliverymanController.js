@@ -9,7 +9,15 @@ import File from '../models/File';
 
 class DeliverymanController {
   async index(req, res) {
-    return res.json({});
+    const user = await User.findByPk(req.userId);
+
+    if (user.admin === 0) {
+      return res.status(401).json({ error: 'You are not allowed to do this' });
+    }
+
+    const deliverymans = await Deliveryman.findAll({ where: { status: 1 } });
+
+    return res.json(deliverymans);
   }
 
   async store(req, res) {
@@ -31,6 +39,12 @@ class DeliverymanController {
 
     if (userExist || deliverymanExist) {
       return res.status(400).json({ error: 'This email is already in use' });
+    }
+
+    const user = await User.findByPk(req.userId);
+
+    if (user.admin === 0) {
+      return res.status(401).json({ error: 'You are not allowed to do this' });
     }
 
     const { id, name, email } = await Deliveryman.create(req.body);
@@ -71,6 +85,12 @@ class DeliverymanController {
       }
     }
 
+    const user = await User.findByPk(req.userId);
+
+    if (user.admin === 0) {
+      return res.status(401).json({ error: 'You are not allowed to do this' });
+    }
+
     const { id, name } = await deliveryman.update(req.body);
 
     return res.json({
@@ -89,28 +109,39 @@ class DeliverymanController {
       return res.status(404).json({ error: 'Deliveryman not found' });
     }
 
+    const user = await User.findByPk(req.userId);
+
+    if (user.admin === 0) {
+      return res.status(401).json({ error: 'You are not allowed to do this' });
+    }
+
     const avatar = await File.findOne({ where: { id: avatar_id } });
 
-    // Indo até a foto do usuario
-    const avatarPath = resolve(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'tmp',
-      'uploads',
-      avatar.path
-    );
-    // Deleta o arquivo no servidor
-    const unlinkAsync = promisify(unlink);
+    if (avatar) {
+      // Indo até a foto do usuario
+      const avatarPath = resolve(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'tmp',
+        'uploads',
+        avatar.path
+      );
 
-    // Tirando o avatar relacionado a este entregador
-    deliveryman.avatar_id = null;
+      // Deleta o arquivo no servidor
+      const unlinkAsync = promisify(unlink);
+
+      // Tirando o avatar relacionado a este entregador
+      deliveryman.avatar_id = null;
+      // Retorna quando tiver resolvido todas as promises
+      await Promise.all([avatar.destroy(), unlinkAsync(avatarPath)]);
+    }
+
     // Alterando o status deste entregador para 0-Excluido
     deliveryman.status = 0;
+
     await deliveryman.save();
-    // Retorna quando tiver resolvido todas as promises
-    await Promise.all([avatar.destroy(), unlinkAsync(avatarPath)]);
 
     return res.status(200).json(deliveryman);
   }
