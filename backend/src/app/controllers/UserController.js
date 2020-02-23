@@ -37,6 +37,9 @@ class UserController {
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
+      // admin: Yup.number()
+      // .positive()
+      // .lessThan(2),
       oldPassword: Yup.string().min(6),
       password: Yup.string()
         .min(6)
@@ -69,6 +72,10 @@ class UserController {
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
       return res.status(401).json({ error: 'Password does not match' });
     }
+
+    // if (admin && user.admin === 0) {
+    //   return res.status(401).json({ error: 'You are not allowed to do this' });
+    // }
 
     const { id, name } = await user.update(req.body);
 

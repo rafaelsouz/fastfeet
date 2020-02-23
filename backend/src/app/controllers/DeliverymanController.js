@@ -104,7 +104,9 @@ class DeliverymanController {
     // Deleta o arquivo no servidor
     const unlinkAsync = promisify(unlink);
 
+    // Tirando o avatar relacionado a este entregador
     deliveryman.avatar_id = null;
+    // Alterando o status deste entregador para 0-Excluido
     deliveryman.status = 0;
     await deliveryman.save();
     // Retorna quando tiver resolvido todas as promises
