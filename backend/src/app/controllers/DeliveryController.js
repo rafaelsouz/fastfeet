@@ -30,7 +30,7 @@ class DeliveryController {
     const { recipient_id, deliveryman_id } = req.body;
 
     const checkIsRecipient = await Recipient.findOne({
-      where: { recipient_id },
+      where: { id: recipient_id },
     });
 
     if (!checkIsRecipient) {
@@ -38,16 +38,16 @@ class DeliveryController {
     }
 
     const checkIsDeliveryman = await Deliveryman.findOne({
-      where: { deliveryman_id },
+      where: { id: deliveryman_id },
     });
 
     if (!checkIsDeliveryman) {
       return res.status(401).json({ error: 'Deliveryman not found' });
     }
 
-    const delivery = await Delivery.create(req.body);
+    const { id, product } = await Delivery.create(req.body);
 
-    return res.json(delivery);
+    return res.json({ id, recipient_id, deliveryman_id, product });
   }
 
   async update(req, res) {
