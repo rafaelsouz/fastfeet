@@ -5,6 +5,9 @@ import User from '../models/User';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
 
+import DeliveryMail from '../jobs/DeliveryMail';
+import Queue from '../../lib/Queue';
+
 class DeliveryController {
   async index(req, res) {
     return res.json({});
@@ -29,25 +32,35 @@ class DeliveryController {
 
     const { recipient_id, deliveryman_id } = req.body;
 
-    const checkIsRecipient = await Recipient.findOne({
+    const recipient = await Recipient.findOne({
       where: { id: recipient_id },
     });
 
-    if (!checkIsRecipient) {
+    if (!recipient) {
       return res.status(401).json({ error: 'Recipient not found' });
     }
 
-    const checkIsDeliveryman = await Deliveryman.findOne({
+    const deliveryman = await Deliveryman.findOne({
       where: { id: deliveryman_id },
     });
 
-    if (!checkIsDeliveryman) {
+    if (!deliveryman) {
       return res.status(401).json({ error: 'Deliveryman not found' });
     }
 
-    const { id, product } = await Delivery.create(req.body);
+    try {
+      const { id, product } = await Delivery.create(req.body);
 
-    return res.json({ id, recipient_id, deliveryman_id, product });
+      await Queue.add(DeliveryMail.key, {
+        recipient,
+        product,
+        deliveryman,
+      });
+
+      return res.json({ id, recipient_id, deliveryman_id, product });
+    } catch (error) {
+      return res.status(500).json({ error: 'Error during create delivery' });
+    }
   }
 
   async update(req, res) {
