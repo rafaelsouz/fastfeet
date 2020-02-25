@@ -1,0 +1,14 @@
+<strong> Olá, {{ deliveryman }}</strong>
+<p>O produto {{ product }} já está disponivel para a retirada, confira os detalhes abaixo: </p>
+<p>
+  🏠<strong> Destinatário: </strong> <br/>
+  <p> - Nome: {{ recipient.name }} </p>
+  <p> - Rua: {{ recipient.street }} </p>
+  <p> - Número: {{ recipient.number }} </p>
+  <p> - Bairro: {{ recipient.neighborhood	}} </p>
+  <p> - Cidade: {{ recipient.city	}} </p>
+  <p> - Estado: {{ recipient.state	}} </p>
+  <p> - CEP: {{ recipient.zipcode	}} </p>
+  <br/>
+  <small>Obs: A retirada do produto só pode ser realizada entre 8:00 a 18:00. </small>
+</p>
