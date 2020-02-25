@@ -60,6 +60,7 @@ class DeliverymanController {
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
+      status: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -67,12 +68,17 @@ class DeliverymanController {
     }
 
     const deliveryman = await Deliveryman.findByPk(req.params.id);
+    const { email, status } = req.body;
 
     if (!deliveryman) {
       return res.status(404).json({ error: 'Deliveryman not found' });
     }
 
-    const { email } = req.body;
+    if (!status && deliveryman.status === 0) {
+      return res
+        .status(401)
+        .json({ error: 'This delivery is disabled, activate it first' });
+    }
 
     if (email && email !== deliveryman.email) {
       const userExist = await User.findOne({ where: { email } });
@@ -107,6 +113,12 @@ class DeliverymanController {
 
     if (!deliveryman) {
       return res.status(404).json({ error: 'Deliveryman not found' });
+    }
+
+    if (deliveryman.status === 0) {
+      return res
+        .status(401)
+        .json({ error: 'This user is disabled, activate it first' });
     }
 
     const user = await User.findByPk(req.userId);
