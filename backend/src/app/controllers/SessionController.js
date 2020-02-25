@@ -29,6 +29,12 @@ class SessionController {
       return res.status(401).json({ error: 'Password does not match' });
     }
 
+    if (user.status === 0) {
+      return res
+        .status(401)
+        .json({ error: 'This user is disabled, contact admin' });
+    }
+
     const { id, name } = user;
 
     return res.json({
