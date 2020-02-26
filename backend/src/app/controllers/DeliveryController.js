@@ -10,7 +10,36 @@ import Queue from '../../lib/Queue';
 
 class DeliveryController {
   async index(req, res) {
-    return res.json({});
+    const user = await User.findByPk(req.userId);
+
+    if (user.admin === 0) {
+      return res.status(401).json({ error: 'You are not allowed to do this' });
+    }
+
+    const deliveries = await Delivery.findAll({
+      include: [
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: [
+            'name',
+            'street',
+            'number',
+            'neighborhood',
+            'city',
+            'state',
+            'zipcode',
+          ],
+        },
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
+
+    return res.json(deliveries);
   }
 
   async store(req, res) {
@@ -72,7 +101,6 @@ class DeliveryController {
   async update(req, res) {
     const schema = Yup.object().shape({
       product: Yup.string(),
-      canceled_at: Yup.date(),
       recipient_id: Yup.number(),
       deliveryman_id: Yup.number(),
       status: Yup.number(),
