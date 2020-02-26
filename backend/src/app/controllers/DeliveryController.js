@@ -93,41 +93,67 @@ class DeliveryController {
     const { recipient_id, deliveryman_id } = req.body;
 
     if (recipient_id && recipient_id !== delivery.recipient_id) {
-      const recipient = await Recipient.findOne({
+      const checkIsRecipient = await Recipient.findOne({
         where: { id: recipient_id },
       });
 
-      if (!recipient) {
+      if (!checkIsRecipient) {
         return res.status(401).json({ error: 'Recipient not found' });
       }
     }
 
     if (deliveryman_id && deliveryman_id !== delivery.deliveryman_id) {
-      const deliveryman = await Deliveryman.findOne({
+      const checkIsDeliveryman = await Deliveryman.findOne({
         where: { id: deliveryman_id },
       });
 
-      if (!deliveryman) {
+      if (!checkIsDeliveryman) {
         return res.status(401).json({ error: 'Deliveryman not found' });
       }
 
-      if (deliveryman.status === 0) {
+      if (checkIsDeliveryman.status === 0) {
         return res
           .status(401)
           .json({ error: 'This deliveryman is disabled, activate it first' });
       }
     }
 
-    await delivery.update(req.body);
+    try {
+      const { id, product } = await delivery.update(req.body);
 
-    const { product, canceled_at } = delivery;
+      const { recipient, deliveryman } = await Delivery.findByPk(id, {
+        include: [
+          {
+            model: Recipient,
+            as: 'recipient',
+            attributes: [
+              'name',
+              'street',
+              'number',
+              'neighborhood',
+              'city',
+              'state',
+              'zipcode',
+            ],
+          },
+          {
+            model: Deliveryman,
+            as: 'deliveryman',
+            attributes: ['name', 'email'],
+          },
+        ],
+      });
 
-    return res.json({
-      recipient_id,
-      deliveryman_id,
-      product,
-      canceled_at,
-    });
+      await Queue.add(DeliveryMail.key, {
+        recipient,
+        product,
+        deliveryman,
+      });
+
+      return res.json({ id, recipient_id, deliveryman_id, product });
+    } catch (error) {
+      return res.status(500).json({ error: 'Error during create delivery' });
+    }
   }
 
   async delete(req, res) {
