@@ -185,7 +185,29 @@ class DeliveryController {
   }
 
   async delete(req, res) {
-    return res.json({});
+    const delivery = await Delivery.findByPk(req.params.id);
+
+    if (!delivery) {
+      return res.status(401).json({ error: 'Delivery not found' });
+    }
+
+    const user = await User.findByPk(req.userId);
+
+    if (user.admin === 0) {
+      return res.status(401).json({ error: 'You are not allowed to do this' });
+    }
+
+    if (delivery.status === 0) {
+      return res
+        .status(401)
+        .json({ error: 'This delivery is disabled, activate it first' });
+    }
+
+    delivery.status = 0;
+
+    delivery.save();
+
+    return res.json({ delivery });
   }
 }
 
