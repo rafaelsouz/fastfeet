@@ -126,7 +126,7 @@ class DeliverymanController {
     if (user.admin === 0) {
       return res.status(401).json({ error: 'You are not allowed to do this' });
     }
-
+    // Como o avatar não é um dado importante para o sistema, eu vou deletar ela no banco e no server.
     const avatar = await File.findOne({ where: { id: avatar_id } });
 
     if (avatar) {

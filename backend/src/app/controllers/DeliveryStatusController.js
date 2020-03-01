@@ -62,8 +62,7 @@ class DeliveryStatusController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      start_date: Yup.date(),
-      end_date: Yup.date(),
+      signature_id: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -86,17 +85,42 @@ class DeliveryStatusController {
 
     const { deliveryId } = req.query;
 
-    const delivery = await Delivery.findOne(deliveryId);
+    const delivery = await Delivery.findByPk(deliveryId);
 
     if (!delivery) {
       return res.status(400).json({ error: 'Delivery does not found. ' });
     }
 
     const { start_date, end_date } = req.query;
+    const { signature_id } = req.body;
 
-    const parsedDate = parseISO(start_date);
+    const parsedEndDate = parseISO(end_date);
 
-    const startHour = getHours(parsedDate);
+    if (end_date) {
+      if (!signature_id) {
+        return res
+          .status(400)
+          .json({ error: 'Recipient signature photo required.' });
+      }
+
+      // Validando se a entrega já tem um horário de retirada cadastrado.
+      if (!delivery.start_date) {
+        return res.status(400).json({
+          error: 'First you need to register the delivery pickup time',
+        });
+      }
+
+      const deliveryCompleted = await delivery.update({
+        signature_id,
+        end_date: parsedEndDate,
+      });
+
+      return res.json(deliveryCompleted);
+    }
+
+    const parsedStartDate = parseISO(start_date);
+
+    const startHour = getHours(parsedStartDate);
 
     // Verificando se o horario da retirada do entregador é entre 8-18h
     if (startHour && (startHour < 8 || startHour >= 18)) {
@@ -110,7 +134,10 @@ class DeliveryStatusController {
       where: {
         deliveryman_id: id,
         start_date: {
-          [Op.between]: [startOfDay(parsedDate), endOfDay(parsedDate)],
+          [Op.between]: [
+            startOfDay(parsedStartDate),
+            endOfDay(parsedStartDate),
+          ],
         },
       },
     });
@@ -122,15 +149,17 @@ class DeliveryStatusController {
       });
     }
 
-    if (end_date) {
-      if (!req.file) {
-        return res
-          .status(400)
-          .json({ error: 'Recipient signature photo required.' });
-      }
-    }
+    const { product, recipient_id } = await delivery.update({
+      start_date: parsedStartDate,
+    });
 
-    return res.json(deliveriesDay);
+    return res.json({
+      deliveryId,
+      recipient_id,
+      deliveryman_id: id,
+      product,
+      start_date,
+    });
   }
 
   async delete(req, res) {
