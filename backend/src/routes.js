@@ -18,14 +18,13 @@ const upload = multer(multerConfig);
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 
+// Rotas para entregador
 routes.get('/deliveryman/:id/deliveries', DeliveryStatusController.index);
-routes.put(
-  '/deliveryman/:id/deliveries',
-  upload.single('file'),
-  DeliveryStatusController.update
-);
+routes.put('/deliveryman/:id/deliveries', DeliveryStatusController.update);
+routes.post('delivery/problems');
 
 routes.use(authMiddleware);
+// Rotas para a distribuidora
 routes.put('/users', UserController.update);
 
 routes.post('/recipients', RecipientController.store);
@@ -42,5 +41,8 @@ routes.get('/delivery', DeliveryController.index);
 routes.post('/delivery', DeliveryController.store);
 routes.put('/delivery/:id', DeliveryController.update);
 routes.delete('/delivery/:id', DeliveryController.delete);
+
+routes.get('delivery/problems');
+routes.get('delivery/:id/problems');
 
 export default routes;
