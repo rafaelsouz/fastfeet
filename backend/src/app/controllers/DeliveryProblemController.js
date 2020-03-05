@@ -24,6 +24,10 @@ class DeliveryProblemController {
       attributes: ['id', 'description', 'delivery_id'],
     });
 
+    if (deliveriesWithProblem.length === 0) {
+      return res.status(400).json({ error: 'No delivery had any problem' });
+    }
+
     return res.json(deliveriesWithProblem);
   }
 
@@ -43,6 +47,13 @@ class DeliveryProblemController {
 
     if (!delivery) {
       return res.status(404).json({ error: 'Delivery not found' });
+    }
+
+    // Verificando se a entrega foi retirada.
+    if (!Delivery.start_date) {
+      return res
+        .status(404)
+        .json({ error: 'This delivery has not been picked up' });
     }
 
     const deliveryProblem = await DeliveryProblem.create({
