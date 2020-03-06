@@ -46,13 +46,13 @@ class DeliveryProblemController {
     const delivery = await Delivery.findOne({ where: { id } });
 
     if (!delivery) {
-      return res.status(404).json({ error: 'Delivery not found' });
+      return res.status(400).json({ error: 'Delivery not found' });
     }
 
     // Verificando se a entrega foi retirada.
-    if (!Delivery.start_date) {
+    if (!delivery.start_date) {
       return res
-        .status(404)
+        .status(400)
         .json({ error: 'This delivery has not been picked up' });
     }
 
@@ -62,6 +62,36 @@ class DeliveryProblemController {
     });
 
     return res.json({ id: deliveryProblem.id, delivery_id: id, description });
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+
+    const deliveryProblem = await DeliveryProblem.findByPk(id);
+
+    if (!deliveryProblem) {
+      return res
+        .status(400)
+        .json({ error: 'Delivery problem does not found.' });
+    }
+
+    const delivery = await Delivery.findByPk(deliveryProblem.delivery_id);
+
+    if (!delivery.start_date) {
+      return res
+        .status(400)
+        .json({ error: 'This delivery has not been picked up' });
+    }
+
+    if (delivery.canceled_at) {
+      return res
+        .status(400)
+        .json({ error: 'This delivery has already been canceled' });
+    }
+
+    await delivery.update({ canceled_at: new Date() });
+
+    return res.json({ delivery });
   }
 }
 
