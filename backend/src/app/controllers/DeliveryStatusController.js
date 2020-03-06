@@ -4,6 +4,11 @@ import { getHours, parseISO, startOfDay, endOfDay } from 'date-fns';
 
 import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
+import DeliveryProblem from '../models/DeliveryProblem';
+import Recipient from '../models/Recipient';
+
+import CancellationMail from '../jobs/CancellationMail';
+import Queue from '../../lib/Queue';
 
 class DeliveryStatusController {
   async index(req, res) {
@@ -163,7 +168,60 @@ class DeliveryStatusController {
   }
 
   async delete(req, res) {
-    return res.json({});
+    const { id } = req.params;
+
+    const deliveryProblem = await DeliveryProblem.findByPk(id);
+
+    if (!deliveryProblem) {
+      return res
+        .status(400)
+        .json({ error: 'Delivery problem does not found.' });
+    }
+
+    const delivery = await Delivery.findByPk(deliveryProblem.delivery_id, {
+      include: [
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: ['name'],
+        },
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
+
+    const { recipient, deliveryman } = delivery;
+
+    if (!delivery.start_date) {
+      return res
+        .status(400)
+        .json({ error: 'This delivery has not been picked up' });
+    }
+
+    if (delivery.canceled_at) {
+      return res
+        .status(400)
+        .json({ error: 'This delivery has already been canceled' });
+    }
+
+    try {
+      const { product } = await delivery.update({ canceled_at: new Date() });
+
+      await Queue.add(CancellationMail.key, {
+        recipient,
+        product,
+        deliveryman,
+      });
+
+      return res.json(delivery);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: 'Error during delivery cancellation' });
+    }
   }
 }
 
