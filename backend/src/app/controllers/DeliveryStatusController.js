@@ -6,6 +6,7 @@ import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
 import DeliveryProblem from '../models/DeliveryProblem';
 import Recipient from '../models/Recipient';
+import User from '../models/User';
 
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
@@ -59,10 +60,6 @@ class DeliveryStatusController {
     });
 
     return res.json(deliveries);
-  }
-
-  async store(req, res) {
-    return res.json({});
   }
 
   async update(req, res) {
@@ -169,6 +166,12 @@ class DeliveryStatusController {
 
   async delete(req, res) {
     const { id } = req.params;
+
+    const user = await User.findByPk(req.userId);
+
+    if (user.admin === 0) {
+      return res.status(401).json({ error: 'You are not allowed to do this' });
+    }
 
     const deliveryProblem = await DeliveryProblem.findByPk(id);
 

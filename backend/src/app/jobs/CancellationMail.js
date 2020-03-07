@@ -10,7 +10,7 @@ class CancellationMail {
 
     await Mail.sendMail({
       to: `${deliveryman.name} <${deliveryman.email}>`,
-      subject: `A entrega do(a) ${product} foi cancelado(a)! .`,
+      subject: `A entrega do(a) ${product} foi cancelado(a)!`,
       template: 'cancellation',
       context: {
         deliveryman: deliveryman.name,

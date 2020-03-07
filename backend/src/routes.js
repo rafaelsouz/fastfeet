@@ -28,6 +28,8 @@ routes.use(authMiddleware);
 
 // Rotas para a distribuidora
 routes.put('/users', UserController.update);
+routes.put('/users/:id', UserController.update);
+routes.delete('/users/:id', UserController.delete);
 
 routes.post('/recipients', RecipientController.store);
 routes.put('/recipients/:id', RecipientController.update);

@@ -10,12 +10,6 @@ import Queue from '../../lib/Queue';
 
 class DeliveryController {
   async index(req, res) {
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
-
     const deliveries = await Delivery.findAll({
       include: [
         {

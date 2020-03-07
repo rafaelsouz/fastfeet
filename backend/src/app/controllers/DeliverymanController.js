@@ -9,12 +9,6 @@ import File from '../models/File';
 
 class DeliverymanController {
   async index(req, res) {
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
-
     const deliverymans = await Deliveryman.findAll({ where: { status: 1 } });
 
     return res.json(deliverymans);
