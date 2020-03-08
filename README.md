@@ -3,9 +3,12 @@
 
 <h3 align="center">Uma aplicação fullstack de entrega de encomendas para uma transportadora fictícia</h3>
 
-<h4> Para o funcionamento desta aplicação você precisa ter o docker instalado, e utilizar imagem do postgres,
-e depois ir em config/database.js e alterar host, username, password, database de acordo com seu container.
+<h4>
+  Para o funcionamento desta aplicação você precisa do postgres e do RedisDB, e ir em .env e alterar os valores de acordo com sua configuração.
 </h4>
+
+## Funcionalidades
+[Saiba mais](./backend/README.md)
 
 ## Instalação
 ### Backend/API
@@ -50,6 +53,15 @@ Utilizei as seguintes tecnologias:
 -  [JWT](https://jwt.io/)
 -  [Bcrypt](https://www.npmjs.com/package/bcrypt)
 -  [Yup](https://www.npmjs.com/package/yup)
+-  [Date-fns](https://www.npmjs.com/package/date-fns)
+-  [Dotenv](https://www.npmjs.com/package/dotenv)
+-  [pg](https://www.npmjs.com/package/pg)
+-  [pg-hstore](https://www.npmjs.com/package/pg-hstore)
+-  [Express Handlebars](https://www.npmjs.com/package/express-handlebars)
+-  [Multer](https://www.npmjs.com/package/multer)
+-  [Nodemailer](https://www.npmjs.com/package/nodemailer)
+-  [Redis](https://redis.io/)
+-  [Bee Queue](https://www.npmjs.com/package/bee-queue)
 -  [VS Code](https://code.visualstudio.com/) with [ESLint](https://eslint.org/)
 
 ---
