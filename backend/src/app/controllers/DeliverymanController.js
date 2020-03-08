@@ -35,12 +35,6 @@ class DeliverymanController {
       return res.status(400).json({ error: 'This email is already in use' });
     }
 
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
-
     const { id, name, email } = await Deliveryman.create(req.body);
 
     return res.json({
@@ -85,12 +79,6 @@ class DeliverymanController {
       }
     }
 
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
-
     const { id, name } = await deliveryman.update(req.body);
 
     return res.json({
@@ -115,11 +103,6 @@ class DeliverymanController {
         .json({ error: 'This user is disabled, activate it first' });
     }
 
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
     // Como o avatar não é um dado importante para o sistema, eu vou deletar ela no banco e no server.
     const avatar = await File.findOne({ where: { id: avatar_id } });
 

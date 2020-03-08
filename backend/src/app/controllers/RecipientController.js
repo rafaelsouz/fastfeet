@@ -18,12 +18,6 @@ class RecipientController {
       return res.status(400).json({ error: 'Validations fails' });
     }
 
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
-
     const {
       id,
       name,
@@ -62,12 +56,6 @@ class RecipientController {
 
     if (!recipient) {
       return res.status(404).json({ error: 'Recipient not found' });
-    }
-
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
     }
 
     const {

@@ -58,11 +58,6 @@ class UserController {
     const user = await User.findByPk(req.userId);
 
     if (admin || req.params.id || status) {
-      if (user.admin === 0) {
-        return res
-          .status(400)
-          .json({ error: 'You are not allowed to do this' });
-      }
 
       const userEdited = await User.findByPk(req.params.id);
 
@@ -112,12 +107,6 @@ class UserController {
   }
 
   async delete(req, res) {
-    const checkAdmin = await User.findByPk(req.userId);
-
-    if (checkAdmin.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
-
     const { id } = req.params;
 
     const user = await User.findByPk(id);

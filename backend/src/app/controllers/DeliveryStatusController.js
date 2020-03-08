@@ -167,12 +167,6 @@ class DeliveryStatusController {
   async delete(req, res) {
     const { id } = req.params;
 
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
-
     const deliveryProblem = await DeliveryProblem.findByPk(id);
 
     if (!deliveryProblem) {

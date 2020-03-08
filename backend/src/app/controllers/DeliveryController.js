@@ -47,12 +47,6 @@ class DeliveryController {
       return res.status(400).json({ error: 'Validations fails' });
     }
 
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
-    }
-
     const { recipient_id, deliveryman_id } = req.body;
 
     const recipient = await Recipient.findOne({
@@ -102,12 +96,6 @@ class DeliveryController {
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validations fails' });
-    }
-
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
     }
 
     const delivery = await Delivery.findByPk(req.params.id);
@@ -183,12 +171,6 @@ class DeliveryController {
 
     if (!delivery) {
       return res.status(401).json({ error: 'Delivery not found' });
-    }
-
-    const user = await User.findByPk(req.userId);
-
-    if (user.admin === 0) {
-      return res.status(401).json({ error: 'You are not allowed to do this' });
     }
 
     if (delivery.status === 0) {
