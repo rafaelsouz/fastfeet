@@ -103,7 +103,7 @@ class DeliverymanController {
         .json({ error: 'This user is disabled, activate it first' });
     }
 
-    // Como o avatar não é um dado importante para o sistema, eu vou deletar ela no banco e no server.
+    // Como a foto do entregador não é um dado importante para o sistema, eu vou deletar ela no banco e no server.
     const avatar = await File.findOne({ where: { id: avatar_id } });
 
     if (avatar) {

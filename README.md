@@ -8,7 +8,7 @@
 </h4>
 
 ## Funcionalidades
-[Saiba mais](./backend/README.md)
+Para visualizar os requisitos da API, [clique aqui](./backend/README.md)
 
 ## Instalação
 ### Backend/API
@@ -34,6 +34,10 @@ yarn dev
 > Lembre-se de deixar rodando o backend...
 
 ### Frontend
+
+Em breve...
+
+### Mobile
 
 Em breve...
 
